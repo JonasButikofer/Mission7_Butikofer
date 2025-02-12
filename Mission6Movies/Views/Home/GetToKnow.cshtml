@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Get to Know Joel";
+}
+<h1>@ViewData["Title"]</h1>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Side by Side Links</title>
+    <style>
+        .container {
+            display: flex;
+            gap: 20px; /* Adds space between the items */
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            width: 45%;
+        }
+
+        /* New style for centering the image */
+        .image-container {
+            display: flex;
+            justify-content: center; /* Centers the image horizontally */
+            align-items: center; /* Optionally centers it vertically */
+            padding: 20px 0; /* Adds some spacing above and below the image */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="box">
+            <p>Joel regularly performs at QWComedy. See some of his content here:</p>
+            <a href="https://www.qwcomedy.com/">Visit QWComedy</a>
+        </div>
+
+        <div class="box">
+            <p>Joel has a podcast called BaconSale. See his content here:</p>
+            <a href="https://baconsale.com/">Visit BaconSale</a>
+        </div>
+    </div>
+
+    <!-- Center the image container -->
+    <div class="image-container">
+        <a href="https://baconsale.com/" target="_blank">
+            <img src="~/img/baconsalekate.jpg" alt="Clickable Image" width="300">
+        </a>
+    </div>
+
+</body>
+
+
+
+
