@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Mission6Movies.Models.FormModel>
+@using Mission6Movies.Models
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Director</th>
+            <th>Rating</th>
+            <th>Category</th>
+            <th>Notes</th>
+            <th>Lent</th>
+            <th>Edited</th>
+            <th>Copied To Plex</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var movie in Model)
+            {
+                <tr>
+                    <td>@movie.Title</td>
+                    <td>@movie.Year</td>
+                    <td>@movie.Director</td>
+                    <td>@movie.Rating</td>
+                    <td>@movie.Category.CategoryName</td>
+                    <td>@movie.Notes</td>
+                    <td>@movie.LentTo</td>
+                    <td>@(movie.Edited == 1 ? "Yes" : "No")</td>
+                    <td>@(movie.CopiedToPlex == 1 ? "Yes" : "No")</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Home" asp-action="Edit" asp-route-movieId="@movie.MovieId">
+                        Edit
+                    </a>
+                </td>
+                <td>
+                    <a class="btn btn-danger" asp-controller="Home" asp-action="Delete" asp-route-movieId="@movie.MovieId">
+                        Delete
+                    </a>
+                </td>
+
+                </tr>
+               }
+
+               <div asp-validation-summary="All"></div>
+    </tbody>
+</table>

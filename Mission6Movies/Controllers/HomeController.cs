@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Mission6Movies.Models;
 using System.Diagnostics;
 
@@ -9,55 +10,128 @@ namespace Mission6Movies.Controllers
         private readonly FilmApplicationContext _context;
         private readonly ILogger<HomeController> _logger;
 
-        // Single constructor to handle both dependencies
         public HomeController(FilmApplicationContext context, ILogger<HomeController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        // GET: /Home/Index
         public IActionResult Index()
         {
             return View();
         }
 
-        // GET: /Home/GetToKnow
         public IActionResult GetToKnow()
         {
             return View();
         }
 
-        // GET: /Home/Form
         public IActionResult Form()
         {
+            ViewBag.Categories = _context.Categories.ToList();
             return View(new FormModel());
         }
 
-        // POST: /Home/Form
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Form(FormModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Films.Add(model); // Adds a new film to the database
-                _context.SaveChanges(); // Save the changes to the database
+                if (model.MovieId == 0)
+                {
+                    // New record
+                    _context.Movies.Add(model);
+                }
+                else
+                {
+                    // Update existing record
+                    _context.Movies.Update(model);
+                }
+                _context.SaveChanges();
 
-                string movieName = model.MovieName;
-                string rating = model.Rating;
-
-                TempData["SuccessMessage"] = "Form submitted successfully! " + "Movie Name: " + movieName + " and the rating is: " + rating;
-                return RedirectToAction("Form");  // Redirect back to the form view
+                TempData["SuccessMessage"] = $"Form submitted successfully! Movie Name: {model.Title} and the rating is: {model.Rating}";
+                return RedirectToAction("CRUDview");
             }
 
-            return View(model);  // Return the model if validation fails
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(model);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult CRUDview()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var movies = _context.Movies
+                .Include(x => x.Category)
+                .OrderBy(x => x.Title)
+                .ToList();
+
+            return View("CRUDview", movies);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int movieId)
+        {
+            var record = _context.Movies
+                .SingleOrDefault(x => x.MovieId == movieId);
+
+            if (record == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Categories = _context.Categories
+                .OrderBy(c => c.CategoryName)
+                .ToList();
+
+            ViewBag.movies = _context.Movies
+                .Include(x => x.Category)
+                .OrderBy(x => x.Title)
+                .ToList();
+
+            return View("Form", record);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(FormModel app)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Update(app);
+                _context.SaveChanges();
+
+                return RedirectToAction("CRUDview");
+            }
+
+            // Re-populate view data if model state is invalid
+            ViewBag.Categories = _context.Categories.OrderBy(c => c.CategoryName).ToList();
+            ViewBag.movies = _context.Movies.Include(x => x.Category).OrderBy(x => x.Title).ToList();
+            return View("Form", app);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int movieId)
+        {
+            var record = _context.Movies.SingleOrDefault(x => x.MovieId == movieId);
+            if (record == null)
+            {
+                return NotFound();
+            }
+            return View(record);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(FormModel app)
+        {
+            var movie = _context.Movies.Find(app.MovieId);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            _context.Movies.Remove(movie);
+            _context.SaveChanges();
+            return RedirectToAction("CRUDview");
         }
     }
 }
-

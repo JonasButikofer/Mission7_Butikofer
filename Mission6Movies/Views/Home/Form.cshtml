@@ -10,10 +10,23 @@
 }
 
 <form asp-action="Form" method="post">
+
     <div class="form-group">
-        <label asp-for="MovieName">Movie Name:</label>
-        <input type="text" class="form-control" asp-for="MovieName" placeholder="Movie Name" />
-        <span asp-validation-for="MovieName" class="text-danger"></span>
+        <input type="hidden" asp-for="MovieId"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Title">Movie Name:</label>
+        <input type="text" class="form-control" asp-for="Title" placeholder="Movie Name" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+
+
+    <div class="form-group">
+        <label asp-for="Year">Release Year:</label>
+        <input type="number" class="form-control" asp-for="Year" placeholder="Year" min="1888" max="2100" required />
+        <span asp-validation-for="Year" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -24,21 +37,25 @@
             <option value="PG-13">PG-13</option>
             <option value="R">R</option>
         </select>
-        <span asp-validation-for="Rating" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Lent">Lent to:</label>
-        <textarea asp-for="Lent" class="form-control" rows="1" maxlength="25" placeholder="Was it lent to anyone?"></textarea>
-        <span asp-validation-for="Lent" class="text-danger"></span>
+        <label asp-for="Director">Director:</label>
+        <input type="text" class="form-control" asp-for="Director" placeholder="Director Name" />
+        <span asp-validation-for="Director" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LentTo">Lent to:</label>
+        <textarea asp-for="LentTo" class="form-control" rows="1" maxlength="25" placeholder="Was it lent to anyone?"></textarea>
+        <span asp-validation-for="LentTo" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Edited">Edited:</label>
         <select asp-for="Edited" class="form-control">
-            <option value="">Select</option>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
         </select>
         <span asp-validation-for="Edited" class="text-danger"></span>
     </div>
@@ -49,8 +66,26 @@
         <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
 
+    <div class="form-group">
+        <label asp-for="CopiedToPlex">Copied to Plex:</label>
+        <select asp-for="CopiedToPlex" class="form-control">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+        <span asp-validation-for="CopiedToPlex" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryId">Category:</label>
+        <select asp-for="CategoryId" class="form-control">
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.CategoryId">@category.CategoryName</option>
+            }
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
-
-
 
